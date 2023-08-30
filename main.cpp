@@ -6,9 +6,9 @@ unsigned int p_sram[100000000] = { 0 };
 CIM cim;
 Four_CIMs cims;
 SRAM_CIM chip(p_sram, 100 * N_CIM_ROW * N_CIM_COL, 100 * N_CIM_ROW, 100 * N_CIM_COL, 100 * N_CIM_COL, 4U, 1U, 1u);
-//Conv3x3<3, 3, 257, 300> conv;
+Conv3x3<3, 3, 257, 10> conv;
 //FullConnect<2000, 300> fc;
-MaxPool<20, 20, 10> maxpool;
+//MaxPool<20, 20, 10> maxpool;
 
 void PrintArray(int* arr, int bias, int n) {
 	for (int i = 0; i < n; i++) {
@@ -20,9 +20,9 @@ void PrintArray(int* arr, int bias, int n) {
 }
 
 // Conv3X3²âÊÔ
-//int XT[3 * 3 * 257] = { 0 };
-//int WT[300 * 3 * 3 * 257] = { 0 };
-//int OT[3 * 3 * 300] = { 0 };
+int XT[3 * 3 * 257] = { 0 };
+int WT[10 * 3 * 3 * 257] = { 0 };
+int OT[3 * 3 * 10] = { 0 };
 
 // FullConnect²âÊÔ
 //int XT[2000] = { 0 };
@@ -30,8 +30,8 @@ void PrintArray(int* arr, int bias, int n) {
 //int OT[300] = { 0 };
 
 // MaxPool²âÊÔ
-int XT[20 * 20 * 10] = { 0 };
-int OT[10 * 10 * 10] = { 0 };
+//int XT[20 * 20 * 10] = { 0 };
+//int OT[10 * 10 * 10] = { 0 };
 
 int main() {
 
@@ -89,15 +89,16 @@ int main() {
 
 	// Conv3x3²âÊÔ
 
-	//for (int i = 0; i < 10; i++) {
-	//	XT[i] += 1;
-	//}
-	//for (int i = 0; i < 10 * 10; i++) {
-	//	WT[i] += 1;
-	//}
-	//fc.FC(XT, 0, WT, 0, OT, 0, chip);
-	//PrintArray(OT, 0, 3 * 3 * 300);
-
+	for (int i = 0; i < 3 * 3 * 257; i++) {
+		XT[i] += 1;
+	}
+	for (int i = 0; i < 10 * 3 * 3 * 257; i++) {
+		WT[i] += 1;
+	}
+	conv.Conv(XT, 0, WT, 0, OT, 0, chip);
+	PrintArray(OT, 0, 3 * 3 * 10);
+	printf("calculating times: %d\nwrite amount: %d\nwrite bits: %d\nread amount: %d\nread bits: %d"
+			, chip.Cal, chip.Write, chip.WriteBits, chip.Read, chip.ReadBits);
 	// FullConnect²âÊÔ
 	//for (int i = 0; i < 2000; i++) {
 	//	XT[i] += 1;
@@ -108,17 +109,17 @@ int main() {
 	//fc.FC(XT, 0, WT, 0, OT, 0, chip);
 
 	// MaxPool²âÊÔ
-	for (int i = 0; i < 20 * 20 * 10; i += 7) {
-		XT[i] += 1;
-	}
+	//for (int i = 0; i < 20 * 20 * 10; i += 7) {
+	//	XT[i] += 1;
+	//}
 	//for (int i = 1; i < 20 * 20 * 10; i += 5) {
 	//	XT[i] += 2;
 	//}
 	//for (int i = 2; i < 20 * 20 * 10; i += 5) {
 	//	XT[i] += 3;
 	//}
-	maxpool.MP(XT, 0, OT, 0);
+	//maxpool.MP(XT, 0, OT, 0);
 
-	PrintArray(OT, 0, 10 * 10 * 10);
+	//PrintArray(OT, 0, 10 * 10 * 10);
 	return 0;
 }

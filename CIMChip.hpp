@@ -93,6 +93,12 @@ public:
 	const unsigned int& I_Output;
 	unsigned int* const P_SRAM;			// SRAMÊ×µØÖ·
 
+	unsigned int Cal;
+	unsigned int Write;
+	unsigned int Read;
+	unsigned int WriteBits;
+	unsigned int ReadBits;
+
 private:
 	const unsigned int I_WEIGHT;
 	const unsigned int I_TOINPUT;

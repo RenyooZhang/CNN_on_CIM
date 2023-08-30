@@ -50,7 +50,7 @@ void CIM::SetWeights(unsigned int* arr, unsigned int bias) {
 	}
 }
 
-void CIM::ReadOutput(unsigned int* arr, unsigned int bias) const {
+void CIM::ReadOutput(unsigned int* arr, unsigned int bias) const{
 	for (unsigned int count = 0u; count < N_CIM_COL; count++) {
 		arr[bias + count] = Output[count];
 	}
@@ -245,11 +245,19 @@ void SRAM_CIM::ReadOutput(unsigned int mode, unsigned int* dest) {
 void SRAM_CIM::Calculate() {
 	unsigned int row_max = Four_CIMs::row_max[cims_mode];
 	cims.SetMode(cims_mode);
+	Cal = Write = WriteBits = Read = ReadBits = 0u;
 	for (unsigned int count0 = 0u; count0 < tail_weight; count0 += 4u * N_CIM_ROW * N_CIM_COL) {
 		LoadWeight();
+		Write += 4u * N_CIM_ROW * N_CIM_COL;
+		WriteBits += 4u * N_CIM_ROW * N_CIM_COL * 4u;
 		for (unsigned int count1 = 0; count1 < m_cal_step; count1 += row_max) {
 			LoadToInput();
+			Write += 4u * N_CIM_ROW;
+			WriteBits += 4u * N_CIM_ROW * 8u;
 			UpdateOutput();
+			Read += 4u * N_CIM_COL;
+			ReadBits += 4u * N_CIM_COL * 20u;
+			Cal++;
 		}
 	}
 	UpdateResult();
@@ -645,6 +653,6 @@ bool Model::Reader(unsigned int id_type, unsigned int n, unsigned int* arr, unsi
 	return true;
 }
 
-//template class Conv3x3<3, 3, 257, 300>;
+template class Conv3x3<3, 3, 257, 10>;
 //template class FullConnect<2000, 300>;
-template class MaxPool<20, 20, 10>;
+//template class MaxPool<20, 20, 10>;
